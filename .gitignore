@@ -1,0 +1,5 @@
+# .gitignore
+.env
+*.key
+config.yaml  # 如果密钥在这个文件里
+secrets/

@@ -1,0 +1,14 @@
+model_list:
+  # All Claude Code models route to qwen3.7-plus via DashScope
+  - model_name: qwen3.7-plus
+    litellm_params:
+      model: openai/qwen3.7-plus
+      api_key: os.environ/DASHSCOPE_API_KEY
+      api_base: os.environ/DASHSCOPE_BASE_URL
+
+litellm_settings:
+  drop_params: true
+  set_verbose: true
+
+general_settings:
+  master_key: sk-litellm-demo-key
