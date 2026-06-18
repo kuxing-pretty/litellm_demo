@@ -13,27 +13,41 @@ Claude Code (VS Code)
 LiteLLM Proxy (localhost:4000)
     |  Anthropic -> OpenAI 协议转换
     v
-DashScope API (dashscope.aliyuncs.com)
+DashScope API / DeepSeek API
     |
     v
-qwen3.7-plus
+qwen3.7-plus / deepseek-v4-pro
 ```
 
 ## 文件说明
 
 | 文件 | 说明 |
 |------|------|
-| `.env` | DashScope API Key 和 Base URL |
-| `config.yaml` | LiteLLM 代理配置，映射模型名到 qwen3.7-plus |
+| `.env` | API Key 和 Base URL 配置 |
+| `config.yaml` | LiteLLM 代理配置，映射模型名到后端模型 |
+| `requirements.txt` | Python 依赖清单 |
+| `start.bat` | Windows CMD 启动脚本（自动加载 .env） |
+| `start.ps1` | PowerShell 启动脚本（自动加载 .env） |
 | `test_litellm_sdk.py` | SDK 直接调用测试脚本 |
 | `.claude/settings.local.json` | Claude Code 项目级环境变量 |
+
+## 可用模型
+
+| 代理模型名 | 后端 | API |
+|------------|------|-----|
+| `qwen3.7-plus` | DashScope qwen3.7-plus | OpenAI 兼容 |
+| `deepseek-v4-pro` | DeepSeek deepseek-v4-pro | OpenAI 兼容 |
+| `claude-opus-4-8` | → 路由到 qwen3.7-plus | OpenAI 兼容 |
+| `claude-sonnet-4-6` | → 路由到 qwen3.7-plus | OpenAI 兼容 |
+
+> `claude-opus-4-8` 和 `claude-sonnet-4-6` 是别名，实际都路由到 DashScope 的 qwen3.7-plus。
 
 ## 使用步骤
 
 ### 1. 安装依赖
 
 ```bash
-pip install litellm[proxy] python-dotenv
+pip install -r requirements.txt
 ```
 
 ### 2. 配置 .env
@@ -41,26 +55,28 @@ pip install litellm[proxy] python-dotenv
 确保 `.env` 文件中包含：
 
 ```
-DASHSCOPE_API_KEY="your-api-key"
+DASHSCOPE_API_KEY="your-dashscope-api-key"
 DASHSCOPE_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1"
+DEEPSEEK_API_KEY="your-deepseek-api-key"
+DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
 ```
 
 ### 3. 启动 LiteLLM 代理
 
+使用启动脚本（推荐，自动加载 .env）：
+
 ```bash
-cd e:\AI\project_codes\litellm_demo
+# Windows CMD
+start.bat
+
+# PowerShell
+.\start.ps1
+```
+
+或手动启动：
+
+```bash
 litellm --config config.yaml --port 4000
-```
-
-启动成功后会显示：
-
-```
-LiteLLM: Proxy initialized with Config, Set models:
-    qwen3.7-plus
-    claude-sonnet-4-6
-    claude-opus-4-8
-    claude-haiku-4-5-20251001
-    claude-fable-5
 ```
 
 ### 4. 验证代理
@@ -70,7 +86,7 @@ LiteLLM: Proxy initialized with Config, Set models:
 curl http://localhost:4000/health
 
 # 列出可用模型
-curl http://localhost:4000/v1/models -H "Authorization: Bearer sk-litellm-demo-key"
+curl http://localhost:4000/v1/models
 
 # 测试调用
 curl -X POST http://localhost:4000/v1/messages \
@@ -110,7 +126,7 @@ python test_litellm_sdk.py
 - **Windows 编码**：`config.yaml` 中不要使用中文注释，否则 YAML 解析器在 Windows 上会因 GBK 编码报错
 - **master_key**：`sk-litellm-demo-key` 是 LiteLLM 代理的访问密钥，Claude Code 的 `ANTHROPIC_API_KEY` 需与之匹配
 - **模型映射**：Claude Code 无论选择哪个 Claude 模型名，都会被路由到 qwen3.7-plus
-- **drop_params**：自动丢弃 DashScope 不支持的参数，避免请求报错
+- **drop_params**：自动丢弃后端不支持的参数，避免请求报错
 
 ## Settings 加载优先级
 
