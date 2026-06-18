@@ -1,6 +1,31 @@
+# ============================================================
+# LiteLLM Proxy Configuration
+# Route all Claude Code requests to DashScope qwen3.7-plus
+# ============================================================
+# NOTE: Do NOT use Chinese comments in this file.
+#       Windows GBK encoding will cause YAML parse errors.
+# ============================================================
+
 model_list:
-  # All Claude Code models route to qwen3.7-plus via DashScope
   - model_name: qwen3.7-plus
+    litellm_params:
+      model: openai/qwen3.7-plus
+      api_key: os.environ/DASHSCOPE_API_KEY
+      api_base: os.environ/DASHSCOPE_BASE_URL
+
+  - model_name: deepseek-v4-pro
+    litellm_params:
+      model: openai/deepseek-v4-pro
+      api_key: os.environ/DEEPSEEK_API_KEY
+      api_base: os.environ/DEEPSEEK_BASE_URL
+
+  - model_name: claude-opus-4-8
+    litellm_params:
+      model: openai/qwen3.7-plus
+      api_key: os.environ/DASHSCOPE_API_KEY
+      api_base: os.environ/DASHSCOPE_BASE_URL
+
+  - model_name: claude-sonnet-4-6
     litellm_params:
       model: openai/qwen3.7-plus
       api_key: os.environ/DASHSCOPE_API_KEY
@@ -9,6 +34,6 @@ model_list:
 litellm_settings:
   drop_params: true
   set_verbose: true
+  default_model: openai/qwen3.7-plus
 
-general_settings:
-  master_key: sk-litellm-demo-key
+general_settings: {}

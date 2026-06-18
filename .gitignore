@@ -1,5 +1,28 @@
-# .gitignore
+# Environment
 .env
-*.key
-config.yaml  # 如果密钥在这个文件里
-secrets/
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
+
+# OpenCode
+.opencode
+
+# OS
+Thumbs.db
+.DS_Store
